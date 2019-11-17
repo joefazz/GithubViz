@@ -8,7 +8,14 @@ Feel free to change any of the existing code - in particular, if you don't want 
 
 Please make your code readable and the visualisations nicely presented.
 
+## Write up
 
-STEPS to complete:
+It took me just shy of 4 hours to finish. If I had longer then I would of made the layout responsive, used different types of graphs and made the graphs drill down-able.
 
-- Install tailwind and postcss https://blog.logrocket.com/create-react-app-and-tailwindcss/
+I used tailwind for all the styling because it's something new that I've been wanting to try for a while so figured this would be a good time to do it. Found it very easy and quick to iteratively prototype designs in the browser.
+
+Date-fns for date manipulation.
+
+Victory for the charts.
+
+This won't look great unless you have some active repos in terms of 

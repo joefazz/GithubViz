@@ -25,7 +25,7 @@ function GithubBreakdownScreen({ profile }) {
         setSelectedRepo(sortedRepos[0]);
         setLoadingRepos(false);
       });
-  }, []);
+  }, [profile.username]);
 
   return (
     <div className="flex h-screen w-screen">
