@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Card from '../Card';
 import { baseUrl } from '../../consts';
 import Visualisation from '../Visualisation';
-import { format, fromUnixTime, parseISO } from 'date-fns';
+import { format, fromUnixTime } from 'date-fns';
 import {
   mapDataToMonthsObject,
   plotDataToXY,
@@ -27,16 +27,18 @@ function GithubBreakdownScreen({ profile }) {
       });
   }, []);
 
-  console.log(repos);
   return (
     <div className="flex h-screen w-screen">
       <header className="flex-none flex bg-gray-400">
-        <div className="px-2 flex flex-col items-center max-w-sm my-4 border-gray-500 border-r-2">
+        <div className="px-4 flex flex-col items-center justify-between my-4 border-gray-500 border-r-2">
           <div className="bg-gray-200 w-full mx-auto px-4 py-4 inline-flex items-center justify-between rounded-lg shadow-md">
+            <div className="h-24 w-24 rounded-full shadow-md border-2 border-gray-900 overflow-hidden">
             <img
               src={profile.avatarUrl}
-              className="h-24 w-24 rounded-full shadow-md border-2 border-gray-900"
+              alt={`${profile.name}'s Avatar'`}
+              className="w-full h-full object-fit"
             />
+            </div>
             <div className="flex flex-col items-center ml-4 justify-center">
               <h1 className="text-3xl text-gray-900 font-bold text-center leading-relaxed tracking-wide">
                 {profile.name}
@@ -44,7 +46,7 @@ function GithubBreakdownScreen({ profile }) {
               <p className="text-md text-gray-700 text-center">{profile.bio}</p>
             </div>
           </div>
-          <div className="bg-gray-200 w-full mx-auto mt-4 px-4 py-4 flex flex-col justify-between rounded-lg shadow-md">
+          <div className="bg-gray-200 w-full mx-auto mt-6 px-4 py-4 flex flex-col justify-between rounded-lg shadow-md">
             <h2 className="text-xl text-gray-900 font-bold">Popular Repositories</h2>
             <ul>
               <RepoList
@@ -57,7 +59,7 @@ function GithubBreakdownScreen({ profile }) {
           </div>
         </div>
       </header>
-      <section className="flex-auto p-2 py-4 bg-gray-200 flex flex-col justify-around items-center">
+      <section className="flex-auto p-2 py-4 bg-gray-200 flex flex-col justify-between border-gray-500">
         <div className="inline-flex items-center justify-center">
           <Card title={'Commits per Week'}>
             {selectedRepo.id && (
@@ -69,8 +71,8 @@ function GithubBreakdownScreen({ profile }) {
                     x: format(fromUnixTime(item.week), 'ww'),
                     y: item.total
                   }));
-                  
-                  const sortedData = sortArrayOfObjectsFromKey(data, 'x', true)
+
+                  const sortedData = sortArrayOfObjectsFromKey(data, 'x', true);
 
                   return sortedData;
                 }}
@@ -114,7 +116,16 @@ function GithubBreakdownScreen({ profile }) {
 
 function RepoList({ loading, repos, selected, setSelected }) {
   if (loading) {
-    return <span>Getting repositories...</span>;
+    return [0, 1, 2, 3, 4].map((_, i) => (
+      <li key={i}>
+        <div
+          className="w-full bg-gray-300 px-2 py-2 rounded-lg mt-4 border border-gray-900 shadow-md hover:shadow-none"
+        >
+          <p className="text-lg text-gray-900 font-semibold">&nbsp;</p>
+          <p className="text-md text-gray-800">&nbsp;</p>
+        </div>
+      </li>
+    ));
   }
 
   if (repos.length === 0) {
@@ -126,7 +137,7 @@ function RepoList({ loading, repos, selected, setSelected }) {
       <button
         onClick={() => setSelected(repo)}
         className={`w-full bg-gray-300 px-2 py-2 rounded-lg mt-4 border border-gray-900 shadow-md hover:shadow-none ${
-          selected.id === repo.id ? 'shadow-none' : ''
+          selected.id === repo.id ? 'shadow-none bg-gray-400' : ''
         }`}
       >
         <p className="text-lg text-gray-900 font-semibold">{repo.name}</p>

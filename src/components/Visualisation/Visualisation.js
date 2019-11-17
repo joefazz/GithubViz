@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { VictoryChart, VictoryBar, VictoryTheme, VictoryAxis, VictoryLabel } from 'victory';
+import { VictoryChart, VictoryBar, VictoryTheme, VictoryAxis } from 'victory';
 import { baseUrl } from '../../consts';
 
 function Visualisation({ query, transformationFunction, axes }) {
@@ -10,9 +10,7 @@ function Visualisation({ query, transformationFunction, axes }) {
       .then((res) => res.json())
       .then((json) => setData(transformationFunction(json)))
       .catch((err) => console.log(err));
-  }, [query]);
-
-  console.log(data);
+  }, [query, transformationFunction]);
 
   return (
     <VictoryChart theme={VictoryTheme.material}>

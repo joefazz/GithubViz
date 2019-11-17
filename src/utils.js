@@ -10,7 +10,6 @@ export function mapDataToMonthsObject(data) {
 
   data.forEach((item) => {
     const createdMonth = format(parseISO(item.created_at), 'MMM');
-    console.log(createdMonth);
     months[createdMonth] += 1;
   });
 
@@ -22,6 +21,7 @@ export function mapDataToYearsObject(data) {
 
   data.forEach((item) => {
     const year = format(parseISO(item.created_at), 'yyyy');
+    years[year] = years[year] || 0;
     years[year] += 1;
   });
 
