@@ -28,9 +28,10 @@ export default class LoginScreen extends Component {
         'Content-Type': 'application/json',
       }
     });
+    const body = await response.json();
 
     if (response.ok) {
-      doLogin(username, password)
+      doLogin(username, password, body)
     } else {
       this.setState({
         username: '',

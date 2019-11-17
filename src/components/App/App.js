@@ -8,8 +8,8 @@ const App = () => {
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
 
   if (isLoggedIn) {
+    return <GithubBreakdownScreen />;
   }
-  return <GithubBreakdownScreen />;
   return <LoginScreen />;
 };
 
