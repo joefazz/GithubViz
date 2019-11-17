@@ -1,26 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { VictoryChart, VictoryBar, VictoryTheme, VictoryAxis } from 'victory';
+import { VictoryChart, VictoryBar, VictoryTheme, VictoryAxis, VictoryLabel } from 'victory';
 import { baseUrl } from '../../consts';
-import { fromUnixTime, format } from 'date-fns';
 
-function Visualisation({ query }) {
+function Visualisation({ query, transformationFunction, axes }) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     fetch(baseUrl + query)
       .then((res) => res.json())
-      .then((json) => {
-        const data = json.map((data) => ({
-          x: format(fromUnixTime(data.week), 'ww'),
-          y: data.total
-        }));
-        const sortedData = data.sort((a, b) => {
-          var x = a['x'];
-          var y = b['x'];
-          return x < y ? -1 : x > y ? 1 : 0;
-        });
-        setData(sortedData);
-      })
+      .then((json) => setData(transformationFunction(json)))
       .catch((err) => console.log(err));
   }, [query]);
 
@@ -29,7 +17,7 @@ function Visualisation({ query }) {
   return (
     <VictoryChart theme={VictoryTheme.material}>
       <VictoryAxis
-        label="Week"
+        label={axes.x}
         style={{
           axis: { stroke: '#756f6a' },
           axisLabel: { fontSize: 10, padding: 30 },
@@ -38,8 +26,9 @@ function Visualisation({ query }) {
         }}
         tickCount={12}
       />
-      <VictoryAxis dependentAxis
-        label="Commits"
+      <VictoryAxis
+        dependentAxis
+        label={axes.y}
         style={{
           axis: { stroke: '#756f6a' },
           axisLabel: { fontSize: 10, padding: 30 },

@@ -2,6 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Card from '../Card';
 import { baseUrl } from '../../consts';
 import Visualisation from '../Visualisation';
+import { format, fromUnixTime, parseISO } from 'date-fns';
+import {
+  mapDataToMonthsObject,
+  plotDataToXY,
+  mapDataToYearsObject,
+  sortArrayOfObjectsFromKey
+} from '../../utils';
 
 function GithubBreakdownScreen({ profile }) {
   const [repos, setRepos] = useState([]);
@@ -12,13 +19,7 @@ function GithubBreakdownScreen({ profile }) {
     fetch(`${baseUrl}/users/${profile.username}/repos`)
       .then((res) => res.json())
       .then((json) => {
-        const sortedRepos = json
-          .sort((b, a) => {
-            var x = a['stargazers_count'];
-            var y = b['stargazers_count'];
-            return x < y ? -1 : x > y ? 1 : 0;
-          })
-          .slice(0, 5);
+        const sortedRepos = sortArrayOfObjectsFromKey(json, 'stargazers_count').slice(0, 5);
 
         setRepos(sortedRepos);
         setSelectedRepo(sortedRepos[0]);
@@ -58,33 +59,50 @@ function GithubBreakdownScreen({ profile }) {
       </header>
       <section className="flex-auto p-2 py-4 bg-gray-200 flex flex-col justify-around items-center">
         <div className="inline-flex items-center justify-center">
-          <Card title={'Commits Per Week'}>
+          <Card title={'Commits per Week'}>
             {selectedRepo.id && (
               <Visualisation
+                axes={{ x: 'Week', y: 'No. Commits' }}
                 query={`/repos/${profile.username}/${selectedRepo.name}/stats/commit_activity`}
+                transformationFunction={(res) => {
+                  const data = res.map((item) => ({
+                    x: format(fromUnixTime(item.week), 'ww'),
+                    y: item.total
+                  }));
+                  
+                  const sortedData = sortArrayOfObjectsFromKey(data, 'x', true)
+
+                  return sortedData;
+                }}
               />
             )}
           </Card>
-          <Card title={'Commits Per Week'}>
+          <Card title={'Forks per Month'}>
             {selectedRepo.id && (
               <Visualisation
-                query={`/repos/${profile.username}/${selectedRepo.name}/stats/commit_activity`}
+                axes={{ x: 'Month', y: 'Forks' }}
+                query={`/repos/${profile.username}/${selectedRepo.name}/forks`}
+                transformationFunction={(response) => plotDataToXY(mapDataToMonthsObject(response))}
               />
             )}
           </Card>
         </div>
         <div className="inline-flex items-center justify-center">
-          <Card title={'Commits Per Week'}>
+          <Card title={'Pull Requests per Year'}>
             {selectedRepo.id && (
               <Visualisation
-                query={`/repos/${profile.username}/${selectedRepo.name}/stats/commit_activity`}
+                axes={{ x: 'Year', y: 'No. Pull Requests' }}
+                query={`/repos/${profile.username}/${selectedRepo.name}/pulls`}
+                transformationFunction={(response) => plotDataToXY(mapDataToYearsObject(response))}
               />
             )}
           </Card>
-          <Card title={'Commits Per Week'}>
+          <Card title={'Issues Created during 2019'}>
             {selectedRepo.id && (
               <Visualisation
-                query={`/repos/${profile.username}/${selectedRepo.name}/stats/commit_activity`}
+                axes={{ x: 'Month', y: 'No. Issues Created' }}
+                query={`/repos/${profile.username}/${selectedRepo.name}/issues?since='2019-01-01T00:00:00Z'`}
+                transformationFunction={(response) => plotDataToXY(mapDataToMonthsObject(response))}
               />
             )}
           </Card>
